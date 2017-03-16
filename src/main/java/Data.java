@@ -1,3 +1,4 @@
+import org.ejml.ops.CommonOps;
 import org.ejml.simple.*;
 
 import java.util.Random;
@@ -15,6 +16,7 @@ public class Data {
     public static final SimpleMatrix MX;
     public static final SimpleMatrix MT;
     public static final SimpleMatrix MD;
+    public static final SimpleMatrix ME;
 
 
     public static final SimpleMatrix A;
@@ -36,6 +38,7 @@ public class Data {
         MX = SimpleMatrix.random(10, 10, 1, 50, new Random(10));
         MT = SimpleMatrix.random(10, 10, 1, 50, new Random(10));
         MD = SimpleMatrix.random(10, 10, 1, 50, new Random(10));
+        ME = SimpleMatrix.random(10, 10, 1, 50, new Random(10));
 
         A = SimpleMatrix.random(1, 10, 1, 50, new Random(10));
         B = SimpleMatrix.random(1, 10, 1, 50, new Random(10));
@@ -52,25 +55,33 @@ public class Data {
 
     public static class FirstFunction implements Function{
         public SimpleMatrix calculate(){
-            return MA.plus(MZ);
+            SimpleMatrix fsum = MC.plus(MZ);
+            SimpleMatrix fmult = B.mult(fsum);
+            SimpleMatrix smult = E.mult(MM);
+            SimpleMatrix res = fmult.plus(smult);
+            return res;
         }
     }
 
     public static class SecondFunction implements Function{
         public SimpleMatrix calculate(){
-            return B.mult(MC.plus(MZ)).plus(E.mult(MM));
+
+            return MB.mult(MO).plus(MC.mult(MX.plus(MM)));
         }
     }
 
     public static class ThirdFunction implements Function{
         public SimpleMatrix calculate(){
-            return B.mult(MC.plus(MZ)).plus(E.mult(MM));
+            double minD = CommonOps.elementMin(D.getMatrix());
+            CommonOps.scale(minD, C.getMatrix());
+
+            return D.mult(MT).minus(C);
         }
     }
 
     public static class FourthFunction implements Function{
         public SimpleMatrix calculate(){
-            return B.mult(MC.plus(MZ)).plus(E.mult(MM));
+            return MB.mult(MO).plus(MC.mult(MX.plus(MM)));
         }
     }
 }
